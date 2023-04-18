@@ -382,8 +382,10 @@ def get_avg(df, col, year):
         0.032
 
     """
-    #<COMPLETE THIS PART>
 
+    df.sort_index(inplace=True)
+    df_year = df.loc[str(year), col]
+    return df_year.mean(skipna=True)
 
 
 def get_ew_rets(df, tickers):
@@ -427,8 +429,11 @@ def get_ew_rets(df, tickers):
 
 
     """
-    #<COMPLETE THIS PART>
 
+    df_tickers = df[tickers].copy()
+    df_tickers.dropna(inplace=True)
+    ew = df_tickers.mean(axis=1)
+    return ew
 
 
 def get_ann_ret(ser, start, end):
@@ -454,7 +459,7 @@ def get_ann_ret(ser, start, end):
     -------
     scalar
         A scalar with the ANNUALISED return for the period starting in `start`
-        and ending in `end`, ignoring missing observations. 
+        and ending in `end`, ignoring missing observations.
 
     Notes
     -----
@@ -462,7 +467,7 @@ def get_ann_ret(ser, start, end):
 
         (tot_ret)**(252/N) - 1
 
-    where 
+    where
 
     - tot_ret represents the total gross return over the period, i.e., the
       product (1+r1)*...*(1+rN), where r1, ..., rN represents daily returns
@@ -473,7 +478,11 @@ def get_ann_ret(ser, start, end):
       computation of tot_ret
 
     """
-    # <COMPLETE THIS PART>
+    ser_trimmed = ser.loc[start:end].dropna()
+    tot_ret = (ser_trimmed + 1).prod()
+    N = ser_trimmed.count()
+    ann_ret = tot_ret ** (252 / N) - 1
+    return ann_ret
 
 
 # ----------------------------------------------------------------------------
@@ -952,7 +961,7 @@ if __name__ == "__main__":
     #_test_mk_aret_df()
     #_test_get_avg()
     #_test_get_ew_rets()
-    #_test_get_ann_ret()
+    _test_get_ann_ret()
 
 
 
